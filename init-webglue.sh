@@ -5,6 +5,7 @@ declare -ar pippkgs=(
     'docopt'
     'twine'
     'python-gitlab'
+    'pyartifactory'
 
     # building ports
     'wheel'  # bdist_wheel
