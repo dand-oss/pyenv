@@ -93,7 +93,8 @@ list_executable_names() {
   local version file
   pyenv-versions --bare --skip-aliases | \
   while read -r version; do
-    for file in "${PYENV_ROOT}/versions/${version}/bin/"*; do
+    for file in "${PYENV_ROOT}/versions/${version}/bin/"* \
+    "${PYENV_ROOT}/versions/${version}/Scripts/"*; do
       echo "${file##*/}"
     done
   done
