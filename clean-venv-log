@@ -1,0 +1,18 @@
+declare -ar linarr=(
+    's?\([^r]\)/bin/readlink?\1/usr/bin/readlink?g'
+    's/3.8.8/3.8.10-x32/g'
+    's/python3.8/python/g'
+    's/py-defun/py-default/g'
+)
+
+declare -ar winarr=(
+    's@\([^?]\)/z@\1/home/appsmith@g'
+)
+
+for sedstr in ${linarr[@]} ; do
+    sed --in-place -e "${sedstr}" venv-linux.txt
+done
+
+for sedstr in ${winarr[@]} ; do
+    sed --in-place -e "${sedstr}" venv-win.txt
+done

@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+# fail on error
+set -e
+set -o pipefail
+
+function do_git {
+    cd ${1}
+    echo 1>&2
+    echo $(pwd) 1>&2
+    git -C ${1} checkout upstream || true
+    git pull || true
+    git -C ${1} checkout master
+    git pull
+}
+
+declare -ar dirs=(
+    '/i/pyenv'
+    '/i/pyenv/plugins/pyenv-virtualenv'
+    '/i/pyenv/versions/py-default'
+    '/i/pyenv/versions/pypy'
+)
+
+for dir in ${dirs[@]} ; do
+    do_git ${dir}
+done

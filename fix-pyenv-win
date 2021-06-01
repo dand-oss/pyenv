@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+# fail on error
+set -e
+set -o pipefail
+
+if [ $# -ne 1 ] ; then
+    echo $*
+    echo "Usage ${0} install_name" 1>&2
+    exit
+fi
+
+declare PR="${PYENV_ROOT}/versions/${1}"
+if [ ! -d "${PR}" ] ; then
+    echo "${PR} must exist"
+    exit
+fi
+
+# get exes/dlls into Scripts
+declare -r scripts_dir="${PR}/Scripts"
+echo "ln -s ${PR}/*.exe ${PR}/*.dll ${scripts_dir}"
+ln -s ${PR}/*.exe ${PR}/*.dll "${scripts_dir}" 2>/dev/null || true
+
+# link Scripts to bin
+declare -r bin_dir="${PR}/bin"
+rm "${bin_dir}" || true
+echo "ln -s ${scripts_dir} ${bin_dir}"
+ln -s "${scripts_dir}" "${bin_dir}"
+
+# pip and virtualenv
+pyenv shell ${1}
+python -m pip install --upgrade pip
+pip install virtualenv
