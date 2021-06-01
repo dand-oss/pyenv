@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+# fail on error
+set -eo pipefail
+
+function do_git {
+    cd "${1}"
+    echo 1>&2
+    echo "$(pwd)" 1>&2
+    git -C "${1}" checkout upstream || true
+    git pull || true
+    git -C "${1}" checkout master
+    git pull
+}
+
+declare -ar dirs=(
+    "${PYENV_ROOT}"
+    "${PYENV_ROOT}/plugins/pyenv-virtualenv"
+    # our bin repos have "postactivate"
+    "${PYENV_ROOT}/versions/py-default/bin"
+    # windows only...
+    "${PYENV_ROOT}/versions/pypy/bin"
+)
+
+for dir in ${dirs[@]} ; do
+    do_git "${dir}"
+done
