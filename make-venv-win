@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+
+# fail on error
+set -eo pipefail
+
+# trace
+set -x
+
+if [ $# -ne 2 ] ; then
+    echo ${*}
+    echo "Usage ${0} install_name 32|64" 1>&2
+    exit
+fi
+
+# from the windows python installer
+declare -r install_name="${1}"
+
+# consider bits...
+declare -r ibits="${2}"
+
+# get and validate the python root
+declare -r PR="${PYENV_ROOT}/versions/${install_name}"
+if [ ! -d "${PR}" ] ; then
+    echo "${PR} must exist"
+    exit
+fi
+
+# validate bits and get the venv name
+if [ "${ibits}" != '32' -a "${ibits}" != '64' ] ; then
+    echo "Usage ${0} install_name 32|64" 1>&2
+    exit
+fi
+declare -r venv_name="py-default-${ibits}"
+
+function install_venv {
+
+    # being in a virtualenv can cause problems
+    pyenv deactivate || true
+
+    # enable pyenv shell
+    eval "$(pyenv init --path)"
+    eval "$(pyenv init -)"
+
+    # check python shell
+    pyenv shell "${install_name}"
+    which python  # should be shim
+    python --version
+
+    # now can install pip and virtualenv into python
+    python -m pip install --upgrade pip
+    pip install virtualenv
+
+    # gen shims
+    pyenv rehash
+}
+
+function make_venv {
+
+    declare -r venv_dir="${PR}/envs/${venv_name}"
+    declare -r venv_synlink="${PYENV_ROOT}/versions/${venv_name}"
+    declare -r venv_scripts_dir="${venv_synlink}/Scripts"
+    declare -r REPO='venv-py-default'
+
+    # clean old
+    rm -rf "${venv_synlink}"
+    rm -rf "${venv_dir}"
+
+    pyenv virtualenv "${install_name}" "${venv_name}"
+
+    git -C "${venv_scripts_dir}" clone "git@gitlab.com:appsware/${REPO}"
+    mv "${venv_scripts_dir}/${REPO}/.git" "${venv_scripts_dir}"
+    rm -rf "${venv_scripts_dir}/${REPO}"
+    git -C "${venv_scripts_dir}" reset --hard
+}
+
+install_venv
+
+make_venv
