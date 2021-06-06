@@ -116,7 +116,15 @@ list_executable_names() {
   pyenv-versions --bare --skip-aliases | \
   while read -r version; do
     for file in "${PYENV_ROOT}/versions/${version}/bin/"*; do
-      echo "${file##*/}"
+       declare fe="${file##*.}"
+       case "${fe}" in
+          dll|DLL|pyd|PYD|so*)
+             :  # skip these extensions
+             ;;
+          *)
+             echo "${file##*/}"
+             ;;
+       esac
     done
   done
 }
