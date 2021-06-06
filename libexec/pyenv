@@ -23,7 +23,7 @@ abort() {
 if enable -f "${BASH_SOURCE%/*}"/../libexec/pyenv-realpath.dylib realpath 2>/dev/null; then
   abs_dirname() {
     local path
-    path="$(realpath "$1")"
+    path="$(resubst_unix "$(realpath "$1")")"
     echo "${path%/*}"
   }
 else
@@ -50,7 +50,7 @@ else
       path="$(resolve_link "$name" || true)"
     done
 
-    echo "$PWD"
+    echo "$(resubst_unix "${PWD}")"
     )
   }
 fi
@@ -75,6 +75,8 @@ export PYENV_DIR
 
 
 shopt -s nullglob
+
+source "${PYENV_ROOT}/libexec/resubst"
 
 bin_path="$(abs_dirname "$0")"
 for plugin_bin in "${bin_path%/*}"/plugins/*/bin; do
