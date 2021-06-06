@@ -116,8 +116,15 @@ remove_outdated_shims() {
 make_shims() {
   local file shim
   for file; do
-    shim="${file##*/}"
-    register_shim "$shim"
+    case "${file##*.}" in
+      dll|DLL|pyd|PYD|so*)
+        :  # skip these extensions
+        ;;
+      *)
+        shim="${file##*/}"
+        register_shim "$shim"
+        ;;
+    esac
   done
 }
 
