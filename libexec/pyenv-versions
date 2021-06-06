@@ -26,6 +26,7 @@ for arg; do
 done
 
 versions_dir="${PYENV_ROOT}/versions"
+source "${PYENV_ROOT}/libexec/resubst"
 
 if ! enable -f "${BASH_SOURCE%/*}"/pyenv-realpath.dylib realpath 2>/dev/null; then
   if [ -n "$PYENV_NATIVE_EXT" ]; then
@@ -55,7 +56,7 @@ if ! enable -f "${BASH_SOURCE%/*}"/pyenv-realpath.dylib realpath 2>/dev/null; th
       path="$(resolve_link "$name" || true)"
     done
 
-    echo "${PWD}/$name"
+    echo "$(resubst_unix "${PWD}/${name}")"
     )
   }
 fi

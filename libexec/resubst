@@ -1,0 +1,26 @@
+
+
+#-----------------------------------------------------------------------------
+function _apply_resubst {
+    # name reference to arry of substitution strings
+    local -n apply_subst_arr="${1}"
+
+    # the value to resubst
+    local aval="${2}"
+
+    # roll the substitutions
+    for sedstr in "${apply_subst_arr[@]}" ; do
+        aval="$(echo "${aval}" | sed -e "${sedstr}")"
+    done
+
+    echo "${aval}"
+}
+
+#-----------------------------------------------------------------------------
+function resubst_unix {
+    declare -ar resubst_arr=(
+        's?/[Cc]/Users/appsmith/asv?/i?g'
+        's?/[Cc]/Users/appsmith?/z?g'
+    )
+    echo "$(_apply_resubst resubst_arr ${1})"
+}
