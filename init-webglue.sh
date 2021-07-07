@@ -23,6 +23,7 @@ declare -ar pippkgs=(
     # pandas needs numpy...
     # pip latest 'prerelease' trick
     'numpy>=0.0.0.dev'
+    'pythran' # scipy build
     'scipy'  # scikit-learn needs
 
     # dev
