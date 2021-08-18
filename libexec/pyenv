@@ -77,6 +77,7 @@ export PYENV_DIR
 shopt -s nullglob
 
 source "${PYENV_ROOT}/libexec/resubst"
+export PRE_PYENV_PATH="${PATH}"
 
 bin_path="$(abs_dirname "$0")"
 for plugin_bin in "${bin_path%/*}"/plugins/*/bin; do
