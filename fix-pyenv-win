@@ -18,14 +18,14 @@ fi
 
 # get exes/dlls into Scripts
 declare -r scripts_dir="${PR}/Scripts"
-echo "ln -s ${PR}/*.exe ${PR}/*.dll ${scripts_dir}"
-ln -s ${PR}/*.exe ${PR}/*.dll "${scripts_dir}" 2>/dev/null || true
+echo "ln -rs ${PR}/*.exe ${PR}/*.dll ${scripts_dir}"
+ln -rs ${PR}/*.exe ${PR}/*.dll "${scripts_dir}" 2>/dev/null || true
 
 # link Scripts to bin
 declare -r bin_dir="${PR}/bin"
 rm "${bin_dir}" || true
-echo "ln -s ${scripts_dir} ${bin_dir}"
-ln -s "${scripts_dir}" "${bin_dir}"
+echo "ln -rs ${scripts_dir} ${bin_dir}"
+ln -rs "${scripts_dir}" "${bin_dir}"
 
 # pip and virtualenv
 pyenv shell ${1}
