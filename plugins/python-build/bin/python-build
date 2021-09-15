@@ -465,7 +465,7 @@ fetch_nightly_tarball() {
   if [ ! -e "${package_name}" ]; then
     local nightly_package_name="$(echo ${package_pattern})"
     if [ -e "${nightly_package_name}" ]; then
-      ln -fs "${nightly_package_name}" "${package_name}"
+      ln -frs "${nightly_package_name}" "${package_name}"
     fi
   fi
 }
@@ -485,7 +485,7 @@ reuse_existing_tarball() {
 
   [ -e "$cached_package_filename" ] || return 1
   verify_checksum "$cached_package_filename" "$checksum" >&4 2>&1 || return 1
-  ln -s "$cached_package_filename" "$package_filename" >&4 2>&1 || return 1
+  ln -rs "$cached_package_filename" "$package_filename" >&4 2>&1 || return 1
 }
 
 download_tarball() {
@@ -512,7 +512,7 @@ download_tarball() {
   if [ -n "$PYTHON_BUILD_CACHE_PATH" ]; then
     local cached_package_filename="${PYTHON_BUILD_CACHE_PATH}/$package_filename"
     { mv "$package_filename" "$cached_package_filename"
-      ln -s "$cached_package_filename" "$package_filename"
+      ln -rs "$cached_package_filename" "$package_filename"
     } >&4 2>&1 || return 1
   fi
 }
@@ -832,7 +832,7 @@ remove_windows_files() {
 build_package_jython() {
   build_package_copy
   { if [ -x "${PREFIX_PATH}/bin/jython" ] && [ ! -x "${PREFIX_PATH}/bin/python" ]; then
-      ( cd "${PREFIX_PATH}/bin" && ln -fs jython python )
+      ( cd "${PREFIX_PATH}/bin" && ln -frs jython python )
     fi
   } >&4 2>&1
   fix_jython_shebangs
@@ -868,7 +868,7 @@ build_package_pyston() {
     if [ -f "${bin}" ] && [ -x "${bin}" ] && [ ! -L "${bin}" ]; then
       case "${bin##*/}" in
       "pyston"* )
-        ( cd "${PREFIX_PATH}/bin" && ln -fs "${bin##*/}" "python" )
+        ( cd "${PREFIX_PATH}/bin" && ln -frs "${bin##*/}" "python" )
         ;;
       esac
     fi
@@ -880,7 +880,7 @@ build_package_ironpython() {
   mkdir -p "${PREFIX_PATH}/bin"
   cp -fR . "${PREFIX_PATH}/bin"
   chmod +x "${PREFIX_PATH}/bin/"*.exe
-  ( cd "${PREFIX_PATH}/bin" && ln -fs ipy.exe python )
+  ( cd "${PREFIX_PATH}/bin" && ln -frs ipy.exe python )
 }
 
 build_package_ironpython_builder() {
@@ -900,7 +900,7 @@ build_package_micropython() {
     "$MAKE" $MAKE_OPTS axtls
     "$MAKE" $MAKE_OPTS CFLAGS_EXTRA="-DMICROPY_PY_SYS_PATH_DEFAULT='\"${PREFIX_PATH}/lib/micropython\"'"
     "$MAKE" install $MAKE_INSTALL_OPTS PREFIX="${PREFIX_PATH}"
-    ln -fs micropython "${PREFIX_PATH}/bin/python"
+    ln -frs micropython "${PREFIX_PATH}/bin/python"
     mkdir -p "${PREFIX_PATH}/lib/micropython"
   }>&4 2>&1
 }
@@ -937,7 +937,7 @@ pyston_architecture() {
 
 build_package_graalpython() {
     build_package_copy
-    ln -fs "${PREFIX_PATH}/bin/graalpython" "${PREFIX_PATH}/bin/python"
+    ln -frs "${PREFIX_PATH}/bin/graalpython" "${PREFIX_PATH}/bin/python"
 }
 
 build_package_pypy() {
@@ -949,10 +949,10 @@ build_package_pypy() {
     if [ -f "${bin}" ] && [ -x "${bin}" ] && [ ! -L "${bin}" ]; then
       case "${bin##*/}" in
       "libpypy"* )
-        ( cd "${PREFIX_PATH}/lib" && ln -fs "../bin/${bin##*/}" "${bin##*/}" )
+        ( cd "${PREFIX_PATH}/lib" && ln -frs "../bin/${bin##*/}" "${bin##*/}" )
         ;;
       "pypy"* )
-        ( cd "${PREFIX_PATH}/bin" && ln -fs "${bin##*/}" "python" )
+        ( cd "${PREFIX_PATH}/bin" && ln -frs "${bin##*/}" "python" )
         ;;
       esac
     fi
@@ -1654,7 +1654,7 @@ build_package_symlink_version_suffix() {
       mv -f "${PREFIX_PATH}/bin" "${PREFIX_PATH}/bin.orig"
     fi
     # Only symlinks are installed in ${PREFIX_PATH}/bin
-    ln -fs "${PREFIX_PATH}/Library/Frameworks/Python.framework/Versions/Current/bin" "${PREFIX_PATH}/bin"
+    ln -frs "${PREFIX_PATH}/Library/Frameworks/Python.framework/Versions/Current/bin" "${PREFIX_PATH}/bin"
   fi
 
   # Not create symlinks on `altinstall` (#255)
@@ -1679,7 +1679,7 @@ build_package_symlink_version_suffix() {
         ;;
         esac
         if [ -n "$link" ] && [ ! -e "$link" ]; then
-          ( cd "${file%/*}" && ln -fs "${file##*/}" "${link##*/}" )
+          ( cd "${file%/*}" && ln -frs "${file##*/}" "${link##*/}" )
         fi
       done
     fi
@@ -2117,11 +2117,11 @@ if [[ "$PYTHON_CONFIGURE_OPTS" == *"--enable-framework"* ]]; then
   create_framework_dirs() {
     local version="$(echo "$1" | sed -E 's/^[^0-9]*([0-9]+\.[0-9]+).*$/\1/')"
     mkdir -p "${PREFIX_PATH}/Library/Frameworks/Python.framework/Versions/${version}"
-    ( cd "${PREFIX_PATH}/Library/Frameworks/Python.framework/Versions" && ln -fs "${version}" "Current")
+    ( cd "${PREFIX_PATH}/Library/Frameworks/Python.framework/Versions" && ln -frs "${version}" "Current")
     local path
     for path in include lib share; do
       mkdir -p "${PREFIX_PATH}/Library/Frameworks/Python.framework/Versions/Current/${path}"
-      ln -fs "${PREFIX_PATH}/Library/Frameworks/Python.framework/Versions/Current/${path}" "${PREFIX_PATH}/${path}"
+      ln -frs "${PREFIX_PATH}/Library/Frameworks/Python.framework/Versions/Current/${path}" "${PREFIX_PATH}/${path}"
     done
   }
   create_framework_dirs "${DEFINITION_PATH##*/}"

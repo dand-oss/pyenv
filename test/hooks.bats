@@ -57,9 +57,9 @@ OUT
   mkdir -p "${path}/exec"
   mkdir -p "$HOME"
   touch "${HOME}/hola.bash"
-  ln -s "../../home/hola.bash" "${path}/exec/hello.bash"
+  ln -rs "../../home/hola.bash" "${path}/exec/hello.bash"
   touch "${path}/exec/bright.sh"
-  ln -s "bright.sh" "${path}/exec/world.bash"
+  ln -rs "bright.sh" "${path}/exec/world.bash"
 
   PYENV_HOOK_PATH="$path" run pyenv-hooks exec
   assert_success

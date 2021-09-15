@@ -109,7 +109,7 @@ export PYTHON_BUILD_CACHE_PATH=
   export PYTHON_BUILD_BUILD_PATH="${TMP}/build"
 
   mkdir -p "$PYTHON_BUILD_BUILD_PATH"
-  ln -s "${FIXTURE_ROOT}/package-1.0.0.tar.gz" "$PYTHON_BUILD_BUILD_PATH"
+  ln -rs "${FIXTURE_ROOT}/package-1.0.0.tar.gz" "$PYTHON_BUILD_BUILD_PATH"
 
   run_inline_definition <<DEF
 install_package "package-1.0.0" "http://example.com/packages/package-1.0.0.tar.gz#ba988b1bb4250dee0b9dd3d4d722f9c64b2bacfc805d1b6eba7426bda72dd3c5" copy

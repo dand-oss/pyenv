@@ -121,7 +121,7 @@ path_without() {
       mkdir -p "$alt"
       for util in bash head cut readlink greadlink; do
         if [ -x "${found}/$util" ]; then
-          ln -s "${found}/$util" "${alt}/$util"
+          ln -rs "${found}/$util" "${alt}/$util"
         fi
       done
       path="${path/:${found}:/:${alt}:}"
