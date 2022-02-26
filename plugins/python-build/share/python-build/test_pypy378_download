@@ -9,7 +9,7 @@ function wget_urls {
     done
 }
 
-declare -ar source_arr=(
+declare -ar script_arr=(
     'pypy2.7-7.3.8'
     'pypy3.7-7.3.8'
     'pypy3.8-7.3.8'
@@ -59,15 +59,53 @@ c1b2e4cde2dcd1208d41ef7b7df8e5c90564a521e7a5db431673da335a1ba697  pypy3.9-v7.3.8
 EOF
 }
 
-# download all files
-for source in "${source_arr[@]}" ; do
-    # check urls
-    source "${source}"
-    wget_urls
+# source the data function
+source_it='0'
+while read line; do
+      if [[ "${line}" =~ 'function pypy_pkg_data'* ]] ; then
+          source_it='1'
+      fi
+      if [[ "${source_it}" == '1' ]] ; then
+          echo "${line}" >> tmp_func.sh
+      fi
+      if [[ "${line}" == '}' ]] ; then
+          source_it='0'
+      fi
+done < ../../bin/python-build
 
-    # install
-    # pyenv install "${source}"
-done
+source tmp_func.sh
+
+declare -r arch_arr=(
+    'linux-aarch64'
+    'linux'
+    'linux64'
+    'osx64'
+    's390x'
+    'win64'
+)
+
+# download all files
+for ascript in "${script_arr[@]}" ; do
+
+  # source lines till terminator
+  while read line; do
+      if [[ "${line}" =~ ^'### end'* ]] ; then
+          break
+      fi
+      eval "${line}"
+  done < "${ascript}"
+
+  # these come from python-build
+  for arch in ${arch_arr[@]} ; do
+      val="$(pypy_pkg_data "${arch}")"
+      declare -a pd=($val)
+
+      wget "${pd[2]}"
+  done
+
+done # script_arr
+
+exit
 
 write_checksums
 
