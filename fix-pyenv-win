@@ -41,7 +41,7 @@ function patch_python {
 }
 
 function link_i {
-    declare -r targ="${ASV%%/}t/pyenv"
+    declare -r targ="${ASV%/}/t/pyenv"
     printf "\nBUILD: link to ${targ}\n"
     ln -rfs "${PYENV_ROOT}/versions/${install_name}" "${targ}"
 }
