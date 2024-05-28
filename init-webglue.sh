@@ -18,16 +18,13 @@ declare -ar pippkgs=(
     'pyyaml'
     'cryptography'  # twine
     'twine'
+    'dynawheel'   # ours
+    'freeze_attributes'   # ours
     # build sys
     'datetime'
     'pyrsistent'  # generate graphql
+    'pypreprocessor' # ours, mod from pypi - fortran
     'numpy'  # boost!
-)
-
-declare -ar pipdirs=(
-    'pypreprocessor'
-    'dynawheel'
-    'freeze_attributes'
 )
 
 # report the python
@@ -36,18 +33,12 @@ python --version
 
 if [ x"$(expr substr $(uname -s) 1 5)" = x'Linux' ]; then
     # linux - just use the python one
-    python ${ASV_SCRIPTS}/install-venv-req.py py-default
+    python ${ASV_SCRIPTS}/install-venv-req.py install
 else
     # windows
 
     # crank on the packages
     pip install --pre ${pippkgs[@]}
-
-    # have to build some on windows
-    for dir in "${pipdirs[@]}" ; do
-        cd "${ASV}/ports/repo/${dir}"
-        python setup.py install
-    done
 
     # setup for precommit
     # ${ASI}/bin/intstall-pre-commit
