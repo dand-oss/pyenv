@@ -13,14 +13,24 @@ function do_git {
     git pull
 }
 
-declare -ar dirs=(
-    "${PYENV_ROOT}"
-    "${PYENV_ROOT}/plugins/pyenv-virtualenv"
-    # our bin repos have "postactivate"
-    "${PYENV_ROOT}/versions/py-default/bin"
-    # windows only...
-    "${PYENV_ROOT}/versions/pypy/bin"
-)
+if [ x"$(expr substr $(uname -s) 1 5)" = x'Linux' ]; then
+    declare -ar dirs=(
+        "${PYENV_ROOT}"
+        "${PYENV_ROOT}/plugins/pyenv-virtualenv"
+        # our bin repos have "postactivate"
+        "${PYENV_ROOT}/versions/py-default/bin"
+        "${PYENV_ROOT}/versions/pypy/bin"
+    )
+else
+    # windows
+    declare -ar dirs=(
+        "${PYENV_ROOT}"
+        "${PYENV_ROOT}/plugins/pyenv-virtualenv"
+        # our bin repos have "postactivate"
+        "${PYENV_ROOT}/versions/py-default-32/bin"
+        "${PYENV_ROOT}/versions/py-default-64/bin"
+    )
+fi
 
 for dir in ${dirs[@]} ; do
     do_git "${dir}"
