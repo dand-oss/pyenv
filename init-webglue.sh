@@ -21,6 +21,7 @@ declare -ar pippkgs=(
     # build sys
     'datetime'
     'pyrsistent'  # generate graphql
+    'numpy'  # boost!
 )
 
 declare -ar pipdirs=(
