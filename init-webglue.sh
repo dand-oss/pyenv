@@ -39,20 +39,13 @@ declare -ar pippkgs64=(
 which python
 python --version
 
-if [ x"$(expr substr $(uname -s) 1 5)" = x'Linux' ]; then
-    # linux - just use the python one
-    python ${ASV_SCRIPTS}/install-venv-req.py install
-else
-    # windows
-
-    # crank on the packages
-    pip install --pre ${pippkgs[@]}
-    if [ "${abits}" == '64' ] ; then
-        pip install --pre ${pippkgs64[@]}
-    fi
-
-    # setup for precommit
-    # ${ASI}/bin/intstall-pre-commit
+# crank on the packages
+apip install ${pippkgs[@]}
+if [ "${abits}" == '64' ] ; then
+    apip install ${pippkgs64[@]}
 fi
+
+# setup for precommit
+# ${ASI}/bin/intstall-pre-commit
 
 python -m install pip --upgrade
