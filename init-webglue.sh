@@ -13,13 +13,11 @@ declare -ar pippkgs=(
     'region-profiler'
     'typer'
     'wheel'  # bdist_wheel
-    'typer'
     'python-gitlab'
     'python-on-whales'
     'pyyaml'
-    'cryptography'  # twine
-    'twine'
-    'twine'
+    'uv'
+    'ninja'
     'dynawheel'   # ours
     'freeze_attributes'   # ours
     # build sys
