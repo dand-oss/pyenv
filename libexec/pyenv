@@ -76,7 +76,16 @@ export PYENV_DIR
 
 shopt -s nullglob
 
-source "${BASH_SOURCE%/*}/resubst"
+# Resolve the real directory of this script (before resubst is available)
+_pyenv_script_dir="${BASH_SOURCE%/*}"
+if [ -L "${BASH_SOURCE}" ]; then
+  _pyenv_real_script="$(readlink "${BASH_SOURCE}")"
+  if [[ "$_pyenv_real_script" != /* ]]; then
+    _pyenv_real_script="${_pyenv_script_dir}/${_pyenv_real_script}"
+  fi
+  _pyenv_script_dir="$(cd "$(dirname "$_pyenv_real_script")" && pwd)"
+fi
+source "${_pyenv_script_dir}/resubst"
 export PRE_PYENV_PATH="${PATH}"
 
 _PYENV_INSTALL_PREFIX="$(abs_dirname "$0")"
